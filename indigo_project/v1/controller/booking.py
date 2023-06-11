@@ -1,4 +1,5 @@
-import models
+from models import Booking
+
 
 class CreateBooking:
 
@@ -13,7 +14,8 @@ class CreateBooking:
             "booking_on": self.data.get("booking_on"),
             "price": self.data.get("price"),
         }
-        
+        obj = Booking.objects.create(**data)
+        return {"booking_id": obj.id}
 
 
 class UpdateBooking:
@@ -29,7 +31,9 @@ class UpdateBooking:
             "booking_on": self.data.get("booking_on"),
             "price": self.data.get("price"),
         }
-       
+        obj = Booking.objects.filter(id=booking_id).update(**data)
+        return {"booking_id": obj.id}
+        
 
 class DeleteBooking:
 
@@ -37,7 +41,12 @@ class DeleteBooking:
         self.data = kwargs.get("data")
 
     def book(self):
-        booking_id =self.data.get("booking_id")
+        booking_id = self.data.get("booking_id")
+        data = {
+            "active": 0
+        }
+        obj = Booking.objects.filter(id=booking_id).update(**data)
+        return {"booking_id": obj.id}
 
 
 class GetBooking:
@@ -46,5 +55,7 @@ class GetBooking:
         self.data = kwargs.get("data")
 
     def book(self):
-
+        obj_list = Booking.objects.all()
+        serialized_data = ListBookingsSerializer(obj_list, many=True).data
+        return {"booking_list": serialized_data}
         
